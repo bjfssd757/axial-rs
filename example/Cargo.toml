@@ -1,0 +1,9 @@
+[package]
+name = "example"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axial_macros = { path = "../axial_macros" }
+tokio = { version = "1.45.0", features = ["full"] }
+axial = { path = "../", features = ["client"] }
