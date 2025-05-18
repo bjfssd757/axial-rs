@@ -2,6 +2,9 @@
 name = "axial"
 version = "0.1.0"
 edition = "2024"
+repository = "https://github.com/bjfssd757/axial-rs"
+description = "Axial - All in One web framework for Rust "
+license = "MIT"
 
 [workspace]
 members = [
