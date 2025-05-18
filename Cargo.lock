@@ -44,10 +44,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "axial"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9abc7d0a319ae51ece14f08a20ffbf98643d8a448ee16cb04d314169e9960ace"
+dependencies = [
+ "http-body-util",
+ "hyper",
+ "hyper-util",
+ "percent-encoding",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "axial_macros"
 version = "0.1.0"
 dependencies = [
- "axial",
+ "axial 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "proc-macro2",
  "quote",
  "syn",
@@ -163,7 +178,7 @@ dependencies = [
 name = "example"
 version = "0.1.0"
 dependencies = [
- "axial",
+ "axial 0.1.0",
  "axial_macros",
  "tokio",
 ]

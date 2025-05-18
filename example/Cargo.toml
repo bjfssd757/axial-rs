@@ -4,6 +4,6 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-axial_macros = { path = "../axial_macros" }
+axial_macros = "0.1.0"
 tokio = { version = "1.45.0", features = ["full"] }
-axial = { path = "../", features = ["client"] }
+axial = { version = "0.1.0", features = ["client"] }
