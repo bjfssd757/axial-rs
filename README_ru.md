@@ -2,6 +2,8 @@
 
 Axial - All in One веб фреймворк для Rust.
 
+**All in One - всё самое нужное для разработки веб серверов в одном фреймворке**
+
 Фреймворк вдохновлён [Ruby on Rails](https://github.com/rails/rails)
 
 ## Использование
