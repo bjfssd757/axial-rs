@@ -2,6 +2,8 @@
 
 Axial - All in One web framework for Rust.
 
+**All in One - everything you need to develop web servers in one framework**
+
 The framework is inspired by [Ruby on Rails](https://github.com/rails/rails)
 
 ## Usage
