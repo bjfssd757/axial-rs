@@ -57,15 +57,16 @@ dependencies = [
 
 [[package]]
 name = "axial"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9bea345e80b30c26e780f2f353d7c406a49f2c4e833020982011ecc8a4aff50"
+version = "0.2.1"
 dependencies = [
+ "async-trait",
  "base64",
  "hex",
  "http-body-util",
  "hyper",
  "hyper-util",
+ "lazy_static",
+ "once_cell",
  "percent-encoding",
  "pqcrypto",
  "pqcrypto-dilithium",
@@ -74,12 +75,15 @@ dependencies = [
  "ring",
  "serde",
  "serde_json",
+ "thread_local",
  "tokio",
 ]
 
 [[package]]
 name = "axial"
 version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec65022cd9437840f5aeb1a5e9ea4b48714906a655914c89ec3252a1b41b9415"
 dependencies = [
  "async-trait",
  "base64",
@@ -117,7 +121,7 @@ dependencies = [
 name = "axial_macros"
 version = "0.1.1"
 dependencies = [
- "axial 0.2.0",
+ "axial 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "proc-macro2",
  "quote",
  "syn",
@@ -241,7 +245,7 @@ dependencies = [
 name = "example"
 version = "0.1.0"
 dependencies = [
- "axial 0.2.0",
+ "axial 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "axial_macros 0.1.0",
  "hex",
  "ring",
