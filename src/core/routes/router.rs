@@ -4,6 +4,7 @@ use std::{
     sync::Arc,
     pin::Pin
 };
+use crate::core::servers::HttpError;
 
 #[derive(Debug, Clone)]
 pub struct Request {
@@ -35,18 +36,18 @@ impl Request {
         }
     }
 
-    pub fn query_param(&self, key: &str) -> Option<String> {
-        self.query_string.as_ref().and_then(|qs| {
-            qs.split('&')
-                .find_map(|pair| {
-                    let mut parts = pair.splitn(2, '=');
-                    if parts.next() == Some(key) {
-                        parts.next().map(|s| decode_str(s))
-                    } else {
-                        None
+    pub fn query_param(&self, key: &str) -> Result<String, HttpError> {
+        if let Some(qs) = &self.query_string {
+            for pair in qs.split('&') {
+                let mut parts = pair.splitn(2, '=');
+                if parts.next() == Some(key) {
+                    if let Some(value) = parts.next() {
+                        return Ok(decode_str(value));
                     }
-                })
-        })
+                }
+            }
+        }
+        Err("Key not found".into())
     }
 
     pub fn query_params(&self) -> HashMap<String, String> {
@@ -67,14 +68,12 @@ impl Request {
         params_map
     }
 
-    pub fn header(&self, key: &str) -> Option<String> {
-        self.headers.iter().find_map(|(k, v)| {
-            if k.eq_ignore_ascii_case(key) {
-                Some(v.clone())
-            } else {
-                None
-            }
-        })
+    pub fn header(&self, key: &str) -> Result<String, HttpError> {
+        self.headers
+            .iter()
+            .find(|(k, _)| k.eq_ignore_ascii_case(key))
+            .map(|(_, v)| v.clone())
+            .ok_or_else(|| HttpError::BadRequest(format!("Header not found: {}", key)))
     }
 
     pub fn headers(&self) -> HashMap<String, String> {
@@ -148,6 +147,19 @@ impl Responder for String {
         Response::new(200)
             .header("Content-Type", "text/plain; charset=utf-8")
             .body(self)
+    }
+}
+
+impl<T: Responder> Responder for Result<T, crate::core::servers::HttpError> {
+    fn into_response(self) -> Response {
+        match self {
+            Ok(responder) => responder.into_response(),
+            Err(err) => {
+                Response::new(err.status_code())
+                    .header("Content-Type", "application/json")
+                    .body(format!("{{\"error\":\"{}\"}}", err.message()))
+            }
+        }
     }
 }
 

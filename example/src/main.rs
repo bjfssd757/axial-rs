@@ -1,5 +1,6 @@
 use std::error::Error;
-use axial_macros::{get, post};
+use axial::core::servers::HttpError;
+use axial_macros::{get, post, put};
 use axial::core::routes::router::{Responder, Response};
 use axial::core::servers::http::{HttpServer, ServerTrait};
 use axial::core::routes::router::Request;
@@ -19,35 +20,30 @@ async fn client() -> String {
 }
 
 #[get("/user/{id}")]
-async fn get_user_details(req: Request) -> impl Responder {
-    let user_id_str = req.path_params.get("id").cloned().unwrap_or_default();
-
-    let version_str = req.query_param("version");
-
-    let mut response_body = format!("User ID: {}", user_id_str);
-    if let Some(v) = version_str {
-        response_body.push_str(&format!(", Version (from query): {}", v));
-    } else {
-        response_body.push_str(", Version (from query): not specified");
-    }
-
-    Response::new(200).body(response_body)
+async fn hello_world(_: Request) -> impl Responder {
+    Response::new(200).body("Hello, World!")
 }
 
 #[post("/user/{id}")]
-async fn post_user_details(req: Request) -> impl Responder {
+async fn post_user_details(req: Request) -> Result<Response, HttpError> {
     let user_id_str = req.path_params.get("id").cloned().unwrap_or_default();
-    let version_str = req.query_param("version");
-    let body = req.body.clone();
+    let version_str = req.query_param("version")?;
 
     let mut response_body = format!("User ID: {}", user_id_str);
-    if let Some(v) = version_str {
-        response_body.push_str(&format!(", Version (from query): {}\nBody: {body}", v));
-    } else {
-        response_body.push_str(", Version (from query): not specified");
-    }
+    response_body.push_str(&format!(", Version (from query): {}", version_str));
 
-    Response::new(201).body(response_body).header("Content-Type", "application/json")
+    Ok(Response::new(201).body(response_body).header("Content-Type", "application/json"))
+}
+
+#[put("/user/{id}")]
+async fn put_user_details(req: Request) -> impl Responder {
+    let user_id_str = req.path_params.get("id").cloned().unwrap_or_default();
+    let version_str = req.query_param("version");
+
+    let mut response_body = format!("User ID: {}", user_id_str);
+    response_body.push_str(&format!(", Version (from query): {}", version_str.unwrap_or_default()));
+
+    Response::new(200).body(response_body).header("Content-Type", "application/json")
 }
 
 #[tokio::main]
@@ -60,11 +56,17 @@ async fn main() {
         eprintln!("Error: {}", e);
     }
 
-    HttpServer::new(String::from("127.0.0.1"), 9092).service(get_user_details)
-        .service(post_user_details).start()
-        .await.map_err(|e| {
-            eprintln!("Error on start server: {e}")
-        }).unwrap();
+    HttpServer::new(String::from("127.0.0.1"), 9093)
+        .settings(|s| {
+            s.keep_alive(true);
+            s.max_connections(10000);
+            s.timeout(std::time::Duration::from_secs(30));
+        })
+        .service(hello_world)
+        .service(post_user_details)
+        .service(put_user_details)
+        .start()
+        .await.unwrap();
 }
 
 fn example_crypto() -> Result<(), Box<dyn Error>> {

@@ -6,7 +6,7 @@ edition = "2024"
 [dependencies]
 axial_macros = { path = "../axial_macros" }
 tokio = { version = "1.45.0", features = ["full"] }
-axial = { version = "0.1.0", features = ["client"] }
-# axial = { path="../", features = ["client", "crypto", "pq-crypto"] }
+# axial = { version = "0.2.0", features = ["client", "crypto", "pq-crypto"] }
+axial = { path="../", features = ["client", "crypto", "pq-crypto"] }
 hex = "0.4.3"
 ring = "0.17.14"

@@ -1,5 +1,6 @@
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex, PoisonError, RwLock};
+use std::sync::{Arc, Mutex, PoisonError};
+use crate::core::servers::http::HttpServerSettings;
 
 #[allow(dead_code)]
 pub trait Config {
@@ -18,12 +19,14 @@ pub enum ConfigValues {
     Http {
         host: String,
         port: u16,
+        settings: Option<HashMap<String, HttpServerSettings>>,
     },
     Https {
         host: String,
         port: u16,
         cert: String,
         key: String,
+        settings: Option<HashMap<String, HttpServerSettings>>,
     },
     Redis {
         host: String,
@@ -31,8 +34,8 @@ pub enum ConfigValues {
         db: u8,
         password: Option<String>,
     },
-    Routes {
-        route: HashMap<String, Methods>, // url - method
+    ServerGlobalSettings {
+        settings: HashMap<String, HttpServerSettings>
     }
 }
 

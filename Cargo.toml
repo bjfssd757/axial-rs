@@ -1,6 +1,6 @@
 [package]
 name = "axial"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2024"
 repository = "https://github.com/bjfssd757/axial-rs"
 description = "Axial - All in One web framework for Rust "
@@ -9,15 +9,18 @@ license = "MIT"
 [workspace]
 members = [
     "./example",
-    "./axial_macros",
+    "./axial_macros", "powerty-test",
 ]
 
 [dependencies]
+async-trait = "0.1.88"
 base64 = { version = "0.22.1", optional = true }
 hex = { version = "0.4.3", optional = true }
 http-body-util = "0.1.3"
 hyper = { version = "1.6.0", features = ["full"] }
 hyper-util = { version = "0.1.11", features = ["tokio", "server-auto"] }
+lazy_static = "1.5.0"
+once_cell = "1.21.3"
 percent-encoding = "2.3.1"
 pqcrypto = { version = "0.18.1", optional = true }
 pqcrypto-dilithium = { version = "0.5.0", optional = true }
@@ -26,6 +29,7 @@ reqwest = { version = "0.12.15", features = ["json"], optional = true }
 ring = { version = "0.17.14", optional = true }
 serde = "1.0.219"
 serde_json = "1.0.140"
+thread_local = "1.1.8"
 tokio = { version = "1.45.0", features = ["full"] }
 
 [features]
