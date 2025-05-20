@@ -1,6 +1,6 @@
 use std::error::Error;
-use axial::core::servers::HttpError;
-use axial_macros::{get, post, put};
+// use axial::core::servers::HttpError;
+use axial_macros::{get, post, /*put*/};
 use axial::core::routes::router::{Responder, Response};
 use axial::core::servers::http::{HttpServer, ServerTrait};
 use axial::core::routes::router::Request;
@@ -24,27 +24,27 @@ async fn hello_world(_: Request) -> impl Responder {
     Response::new(200).body("Hello, World!")
 }
 
-#[post("/user/{id}")]
-async fn post_user_details(req: Request) -> Result<Response, HttpError> {
-    let user_id_str = req.path_params.get("id").cloned().unwrap_or_default();
-    let version_str = req.query_param("version")?;
+// #[post("/user/{id}")]
+// async fn post_user_details(req: Request) -> Result<Response, HttpError> {
+//     let user_id_str = req.path_params.get("id").cloned().unwrap_or_default();
+//     let version_str = req.query_param("version")?;
 
-    let mut response_body = format!("User ID: {}", user_id_str);
-    response_body.push_str(&format!(", Version (from query): {}", version_str));
+//     let mut response_body = format!("User ID: {}", user_id_str);
+//     response_body.push_str(&format!(", Version (from query): {}", version_str));
 
-    Ok(Response::new(201).body(response_body).header("Content-Type", "application/json"))
-}
+//     Ok(Response::new(201).body(response_body).header("Content-Type", "application/json"))
+// }
 
-#[put("/user/{id}")]
-async fn put_user_details(req: Request) -> impl Responder {
-    let user_id_str = req.path_params.get("id").cloned().unwrap_or_default();
-    let version_str = req.query_param("version");
+// #[put("/user/{id}")]
+// async fn put_user_details(req: Request) -> impl Responder {
+//     let user_id_str = req.path_params.get("id").cloned().unwrap_or_default();
+//     let version_str = req.query_param("version");
 
-    let mut response_body = format!("User ID: {}", user_id_str);
-    response_body.push_str(&format!(", Version (from query): {}", version_str.unwrap_or_default()));
+//     let mut response_body = format!("User ID: {}", user_id_str);
+//     response_body.push_str(&format!(", Version (from query): {}", version_str.unwrap_or_default()));
 
-    Response::new(200).body(response_body).header("Content-Type", "application/json")
-}
+//     Response::new(200).body(response_body).header("Content-Type", "application/json")
+// }
 
 #[tokio::main]
 async fn main() {
@@ -57,14 +57,14 @@ async fn main() {
     }
 
     HttpServer::new(String::from("127.0.0.1"), 9093)
-        .settings(|s| {
-            s.keep_alive(true);
-            s.max_connections(10000);
-            s.timeout(std::time::Duration::from_secs(30));
-        })
+        // .settings(|s| {
+        //     s.keep_alive(true);
+        //     s.max_connections(10000);
+        //     s.timeout(std::time::Duration::from_secs(30));
+        // })
         .service(hello_world)
-        .service(post_user_details)
-        .service(put_user_details)
+        // .service(post_user_details)
+        // .service(put_user_details)
         .start()
         .await.unwrap();
 }
