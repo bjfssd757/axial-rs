@@ -1,3 +1,4 @@
+use std::error::Error;
 use axial_macros::{get, post};
 use axial::core::routes::router::{Responder, Response};
 use axial::core::servers::http::{HttpServer, ServerTrait};
@@ -55,9 +56,47 @@ async fn main() {
 
     println!("Response from client: {}", response);
 
+    if let Err(e) = example_crypto() {
+        eprintln!("Error: {}", e);
+    }
+
     HttpServer::new(String::from("127.0.0.1"), 9092).service(get_user_details)
         .service(post_user_details).start()
         .await.map_err(|e| {
             eprintln!("Error on start server: {e}")
         }).unwrap();
+}
+
+fn example_crypto() -> Result<(), Box<dyn Error>> {
+    println!("Example of hybrid encryption using Axial framework with Kyber KEM");
+
+    let bob_keypair = axial::pqcrypto::pq_kem_keypair();
+
+    let bob_public = axial::crypto::SecureKey::new(bob_keypair.public.clone(), axial::crypto::KeyType::KyberPublic)?;
+    let bob_private = axial::crypto::SecureKey::new(bob_keypair.secret.clone(), axial::crypto::KeyType::KyberPrivate)?;
+
+    let message = "Super Secret Message";
+    let metadata = b"From: Alice, Date: 2025-05-20";
+    
+    let (kyber_ciphertext, encrypted_data) = bob_public.with_key(|public_key| {
+        axial::crypto::HybridCrypto::encrypt(public_key, message, Some(metadata))
+    })?;
+    
+    println!("Message encrypted successfully!");
+
+    let (decrypted_message, received_metadata) = bob_private.with_key(|private_key| {
+        axial::crypto::HybridCrypto::decrypt(private_key, &kyber_ciphertext, &encrypted_data, true)
+    })?;
+    
+    println!("Message: {}", decrypted_message);
+    println!("Metadata: {}", String::from_utf8_lossy(
+        &received_metadata.clone().unwrap_or_default()
+    ));
+
+    assert_eq!(message, decrypted_message);
+    assert_eq!(metadata, &received_metadata.unwrap_or_default()[..]);
+    
+    println!("Hybrid function end successfully!");
+    
+    Ok(())
 }
